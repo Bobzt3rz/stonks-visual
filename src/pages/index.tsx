@@ -24,7 +24,7 @@ const Home = () => {
   //   const response = await fetch("https://www.sec.gov/include/ticker.txt", {
   //     headers: {
   //       "User-Agent":
-  //         "Air-Technology-Group Bunnavit-Sawangpiriyakij bunnavit@airtechnology.io",
+  //         "bunnavit bunnavit@airtechnology.io",
   //       "Accept-Encoding": "gzip, deflate",
   //       Host: "www.sec.gov",
   //     },
