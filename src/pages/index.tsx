@@ -2,7 +2,6 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { trpc } from "../utils/trpc";
-import { Search } from "./search";
 
 const Home = () => {
   const { data: session, status } = useSession();
@@ -12,7 +11,7 @@ const Home = () => {
   const postMessage = trpc.useMutation("guestbookpostMessage", {
     onMutate: () => {
       ctx.cancelQuery(["guestbookgetAll"]);
-      let optimisticUpdate = ctx.getQueryData(["guestbookgetAll"]);
+      const optimisticUpdate = ctx.getQueryData(["guestbookgetAll"]);
       if (optimisticUpdate) {
         ctx.setQueryData(["guestbookgetAll"], optimisticUpdate);
       }
@@ -61,7 +60,6 @@ const Home = () => {
       <p>
         Tutorial for <code>create-t3-app</code>
       </p>
-      <Search />
 
       <div className="pt-10">
         {session ? (
