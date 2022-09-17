@@ -1,10 +1,13 @@
 import { signIn, signOut, useSession } from "next-auth/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useQuery } from "react-query";
 import { trpc } from "../utils/trpc";
+import { Search } from "./search";
 
 const Home = () => {
   const { data: session, status } = useSession();
   const [message, setMessage] = useState("");
+  const [cik, setCik] = useState("");
   const ctx = trpc.useContext();
   const postMessage = trpc.useMutation("guestbookpostMessage", {
     onMutate: () => {
@@ -18,6 +21,36 @@ const Home = () => {
       ctx.invalidateQueries(["guestbookgetAll"]);
     },
   });
+  // useQuery(["cik"], async () => {
+  //   const response = await fetch("https://www.sec.gov/include/ticker.txt", {
+  //     headers: {
+  //       "User-Agent":
+  //         "Air-Technology-Group Bunnavit-Sawangpiriyakij bunnavit@airtechnology.io",
+  //       "Accept-Encoding": "gzip, deflate",
+  //       Host: "www.sec.gov",
+  //     },
+  //   });
+  //   if (!response.ok) throw new Error("Something went wrong");
+  //   console.log(response);
+  // });
+  useEffect(() => {
+    const sendRequest = async () => {
+      const myHeaders = new Headers();
+      myHeaders.append(
+        "Cookie",
+        "ak_bmsc=1944099A8025459D2B426F9AF690EB79~000000000000000000000000000000~YAAQi/zaF/1Q3AiDAQAA//+FShFIqIsYB65+fxiR8y9XDACDCcpL2YuWADt86H8jq+ZRmo2A5nm8iswayqGYg7Z0D5HCaQLRCbfVba+fldDQzzUL7vMtBG4Rsb28b6Rraw/2L/flUV3SsPe4lhTmGaH8pZz4uEo3MXaCEjf2vflhoxZfI7H54vBKv1ElLWOitMyCoBfs9cKbcEEcfppfUiQbDSh8YhuJmyBsMWtJlSaxrdUn51o57rSYJeuA9dSLWZw8E3AFUuxyr+tLwZCY+YcjbuNmMAIjsbemRRUjKpMvi0nI3dFJVeXN6pATkxQHhu50bfq9oNfp22C+FZ4twpo9+qsAzGckhgozhMAIGouFL89+pNlzmg=="
+      );
+      const requestOptions = {
+        method: "GET",
+        headers: myHeaders,
+      };
+      fetch("https://www.sec.gov/include/ticker.txt", requestOptions)
+        .then((response) => response.text())
+        .then((result) => console.log(result))
+        .catch((error) => console.log("error", error));
+    };
+    sendRequest();
+  }, []);
 
   if (status === "loading") {
     return <main className="flex flex-col items-center pt-4">Loading...</main>;
@@ -28,6 +61,8 @@ const Home = () => {
       <p>
         Tutorial for <code>create-t3-app</code>
       </p>
+      <Search />
+
       <div className="pt-10">
         {session ? (
           <div>
