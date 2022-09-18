@@ -1,12 +1,12 @@
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
+import Input from "../components/Input";
 import { trpc } from "../utils/trpc";
 
 const Home = () => {
   const { data: session, status } = useSession();
   const [message, setMessage] = useState("");
-  const [cik, setCik] = useState("");
   const ctx = trpc.useContext();
   const postMessage = trpc.useMutation("guestbookpostMessage", {
     onMutate: () => {
@@ -20,18 +20,12 @@ const Home = () => {
       ctx.invalidateQueries(["guestbookgetAll"]);
     },
   });
-  // useQuery(["cik"], async () => {
-  //   const response = await fetch("https://www.sec.gov/include/ticker.txt", {
-  //     headers: {
-  //       "User-Agent":
-  //         "bunnavit bunnavit@airtechnology.io",
-  //       "Accept-Encoding": "gzip, deflate",
-  //       Host: "www.sec.gov",
-  //     },
-  //   });
-  //   if (!response.ok) throw new Error("Something went wrong");
-  //   console.log(response);
-  // });
+  const jsonData = trpc.useQuery(["secgetJsonMap"]);
+
+  useEffect(() => {
+    console.log(jsonData.data);
+  }, [jsonData]);
+
   useEffect(() => {
     const sendRequest = async () => {
       const myHeaders = new Headers();
@@ -60,6 +54,7 @@ const Home = () => {
       <p>
         Tutorial for <code>create-t3-app</code>
       </p>
+      <Input jsonData={jsonData.data} />
 
       <div className="pt-10">
         {session ? (
